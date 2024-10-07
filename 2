@@ -1,0 +1,41 @@
+import numpy as np
+import torch
+
+class EarlyStopping:
+    def __init__(self, patience=7, min_delta=0, verbose=False):
+        """
+        Args:
+            patience (int): 当验证集性能没有改善时，等待的 epoch 数量
+            min_delta (float): 提升的最小幅度
+            verbose (bool): 是否打印提示信息
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.val_loss_min = np.Inf
+
+    def __call__(self, val_loss):
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.save_checkpoint(val_loss)
+        elif score < self.best_score + self.min_delta:
+            self.counter += 1
+            if self.verbose:
+                print(f'EarlyStopping counter: {self.counter} out of {self.patience}')
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.save_checkpoint(val_loss)
+            self.counter = 0
+
+    def save_checkpoint(self, val_loss):
+        '''保存模型，当验证损失减少时'''
+        if self.verbose:
+            print(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
+        self.val_loss_min = val_loss
