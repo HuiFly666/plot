@@ -1,0 +1,20 @@
+def plot_confusion_matrix(y_true, y_pred, class_names):
+    # 生成混淆矩阵
+    cm = confusion_matrix(y_true, y_pred)
+    
+    # 计算百分比
+    cm_percent = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+    
+    # 使用 seaborn 绘制热力图
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm_percent, annot=True, fmt=".2f", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
+    
+    # 添加图像标题和标签
+    plt.title('Confusion Matrix with Percentages')
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    
+    # 显示图像
+    plt.tight_layout()
+    plt.savefig('./version0/images/confusion_matrix_percent.png')
+    plt.show()
