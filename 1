@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
+def plot_confusion_matrix(y_true, y_pred, class_names):
+    # 生成混淆矩阵
+    cm = confusion_matrix(y_true, y_pred)
+    
+    # 计算百分比
+    cm_percent = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+    
+    # 设置图表大小
+    plt.figure(figsize=(8, 6))
+    
+    # 绘制热力图，并设置annot=False，因为我们将手动添加注释
+    sns.heatmap(cm, annot=False, fmt="d", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
+    
+    # 在每个方格中添加个数(百分比)的注释
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(j + 0.5, i + 0.5, f'{cm[i, j]} ({cm_percent[i, j]:.2f}%)',
+                     ha='center', va='center', color='black')
+    
+    # 添加图像标题和标签
+    plt.title('Confusion Matrix with Counts and Percentages')
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    
+    # 显示图像
+    plt.tight_layout()
+    plt.savefig('./version0/images/confusion_matrix_counts_percent.png')
+    plt.show()
